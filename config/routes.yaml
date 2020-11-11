@@ -1,4 +1,4 @@
-#test_method:
-#    path:         /test
-#    controller:   App\Controller\LoginController::test
-#    methods:      GET
+login_user:
+    path:         /login
+    controller:   App\Controller\LoginController::index
+    methods:      POST
