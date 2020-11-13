@@ -18,7 +18,7 @@ class ValidationController extends Exception
 
     public function make($params)
     {
-        if ($params == null || !isset($params['first']) || !isset($params['second']) || !isset($params['email']))
+        if ($params == null || !isset($params['password']) || !isset($params['email']))
         {
             $this->error = 'Missing fields.';
             return false;
