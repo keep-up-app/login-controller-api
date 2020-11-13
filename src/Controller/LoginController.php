@@ -21,7 +21,7 @@ class LoginController extends AbstractController
     }
 
     /**
-     * @Route("/login", methods={"POST"})
+     * @Route("/", methods={"POST"})
      */
     public function index(Request $request) : Response
     {
