@@ -23,7 +23,7 @@ class ValidationController extends Exception
             $this->error = 'Missing fields.';
             return false;
         }
-        
+
         foreach($params as $key => $value)
         {
             if ($value == null || $value == '')
