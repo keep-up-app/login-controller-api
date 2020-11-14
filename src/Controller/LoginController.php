@@ -37,8 +37,15 @@ class LoginController extends AbstractController
 
             if ($this->endpoint->getStatusCode() == 200)
             {
+                $jsonData = $this->endpoint->getJsonContent();
                 $resType = 'data';
-                $resContent = $this->endpoint->getJsonContent();
+                $resContent = json_decode([
+                    'email' => $jsonData['email'],
+                    'token' => $jsonData['token'],
+                    'steamid' => $jsonData['steamid'],
+                    'username' => $jsonData['username'],
+                    'created_at' => $jsonData['created_at']
+                ]);
                 $resCode = Response::HTTP_OK;
             } 
             else 
