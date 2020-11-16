@@ -39,13 +39,13 @@ class LoginController extends AbstractController
             {
                 $jsonData = $this->endpoint->getJsonContent();
                 $resType = 'data';
-                $resContent = json_encode([
+                $resContent = [
                     'email' => $jsonData['email'],
                     'token' => $jsonData['token'],
                     'steamid' => $jsonData['steamid'],
                     'username' => $jsonData['username'],
                     'created_at' => $jsonData['created_at']
-                ]);
+                ];
                 $resCode = Response::HTTP_OK;
             } 
             else 
