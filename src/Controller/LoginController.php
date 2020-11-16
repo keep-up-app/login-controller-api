@@ -35,7 +35,7 @@ class LoginController extends AbstractController
         {
             $this->endpoint->request($params);
 
-            if ($this->endpoint->getStatusCode() == 200)
+            if ($this->endpoint->getStatusCode() == 200 || $this->endpoint->getStatusCode() == 201)
             {
                 $jsonData = $this->endpoint->getJsonContent();
                 $resType = 'data';
