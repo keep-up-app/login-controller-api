@@ -50,7 +50,7 @@ class LoginController extends AbstractController
             } 
             else 
             {
-                $resContent = 'Invalid Email or Password.';
+                $resContent = $this->endpoint->getErrorMessage();
                 $resCode = Response::HTTP_UNAUTHORIZED;
             }
         }
