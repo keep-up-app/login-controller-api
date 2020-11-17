@@ -80,7 +80,7 @@ class ApiController
             
             if ($response->getStatusCode() != 200)
             {
-                $this->errorMessage = $jsonData['details']; 
+                $this->errorMessage = $jsonData['error']; 
             }
             else
             {
