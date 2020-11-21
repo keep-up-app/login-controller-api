@@ -6,64 +6,58 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use App\Controller\ValidationController;
-use App\Controller\ApiController;
+use App\Controller\Exception\InvalidInputException;
+use App\Controller\Exception\RequestException;
+use App\Controller\ValidationController as Validator;
+use App\Controller\UserController as User;
 
 class LoginController extends AbstractController
 {
-    private $validator;
-    private $endpoint;
-
-    function __construct()
-    {
-        $this->validator = new ValidationController();
-        $this->endpoint = new ApiController();
-    }
-
-    /**
+        /**
      * @Route("/", methods={"POST"})
      */
     public function index(Request $request) : Response
     {
         $params = json_decode($request->getContent(), true);
 
-        $resType = 'error';
-        $resContent = 'Internal Server Error';
-        $resCode = Response::HTTP_INTERNAL_SERVER_ERROR;
-
-        if ($this->validator->make($params) == true)
+        try
         {
-            $this->endpoint->request($params);
+            Validator::make($params);
 
-            if ($this->endpoint->getStatusCode() == 200 || $this->endpoint->getStatusCode() == 201)
-            {
-                $jsonData = $this->endpoint->getJsonContent();
-                $resType = 'data';
-                $resContent = [
-                    'email' => $jsonData['email'],
-                    'token' => $jsonData['token'],
-                    'steamid' => $jsonData['steamid'],
-                    'username' => $jsonData['username'],
-                    'created_at' => $jsonData['created_at']
-                ];
-                $resCode = Response::HTTP_OK;
-            } 
-            else 
-            {
-                $resContent = 'Invalid Email or Password.';
-                $resCode = Response::HTTP_UNAUTHORIZED;
-            }
+            $userData = [
+                'email' => $params['email'],
+                'password' => $params['password']
+            ];
+
+            $user = User::get($userData, true);
+            unset($user{'password'});
+
+            return new Response(
+                json_encode($user),
+                Response::HTTP_OK,
+                ['content-type' => 'application/json']
+            );
         }
-        else
+        catch(InvalidInputException $ex)
         {
-            $resContent = $this->validator->getErrorMessage();
-            $resCode = Response::HTTP_BAD_REQUEST;
+            return new Response(
+                json_encode(['error' => 'Invalid Email or Password.']),
+                $ex->getCode(),
+                ['content-type' => 'application/json']
+            );
         }
+        catch(RequestException $ex)
+        {
+            $errorContent = [
+                'error' => $ex->getMessage(),
+                'details' => $ex->getMessage()
+            ];
 
-        return new Response(
-            json_encode([ $resType => $resContent ]),
-            $resCode,
-            ['content-type' => 'application/json']
-        );
+            return new Response(
+                json_encode($errorContent),
+                $ex->getCode(),
+                ['content-type' => 'application/json']
+            );
+        }
     }
 }
