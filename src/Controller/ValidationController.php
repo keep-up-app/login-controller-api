@@ -6,24 +6,18 @@ use App\Controller\Exception\InvalidInputException;
 
 class ValidationController
 {
-    public static function make($params)
+    public static function make($params = [], $reqs = [])
     {
         $params = self::flatten($params);
-
-        if ($params == null || !isset($params['password']) || !isset($params['email']))
+        $reqs = self::flatten($reqs);
+        
+        for ($i = 0; $i < count($reqs); $i++)
         {
-            throw new InvalidInputException('Missing fields.', 400);
-        }
-
-        foreach($params as $key => $value)
-        {
-            if ($value == null || $value == '' || is_array($value))
+            if (!array_key_exists($reqs[$i], $params))
             {
-                throw new InvalidInputException('Missing ' . ucfirst($key) . '.', 400);
+                throw new InvalidInputException("Missing " . ucfirst($reqs[$i]) . ".", 400); 
             }
         }
-
-        unset($value);
     }
 
     private static function flatten($params, $flattened = [])

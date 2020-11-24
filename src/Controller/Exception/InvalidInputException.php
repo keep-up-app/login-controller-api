@@ -19,8 +19,8 @@ class InvalidInputException extends BaseException
         return $this->inputContent;
     }
 
-    public function __construct(String $message = null, $code = 0, $input = null, $value = null, Exception $previous = null) {
-        parent::__construct($message, $code, $previous);
+    public function __construct(String $message = null, $code = 0, $details = null, $input = null, $value = null, Exception $previous = null) {
+        parent::__construct($message, $code, $details, $previous);
     
         $this->inputInQuestion = $input;
         $this->inputContent = $value;

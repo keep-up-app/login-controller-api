@@ -9,11 +9,12 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Controller\Exception\InvalidInputException;
 use App\Controller\Exception\RequestException;
 use App\Controller\ValidationController as Validator;
+use App\Controller\TwoFactorAuthController as TFAC;
 use App\Controller\UserController as User;
 
 class LoginController extends AbstractController
 {
-        /**
+    /**
      * @Route("/", methods={"POST"})
      */
     public function index(Request $request) : Response
@@ -22,15 +23,30 @@ class LoginController extends AbstractController
 
         try
         {
-            Validator::make($params);
+            Validator::make($params, ['email', 'password']);
 
             $userData = [
                 'email' => $params['email'],
-                'password' => $params['password']
+                'password' => $params['password'],
             ];
-
+            
             $user = User::get($userData, true);
             unset($user{'password'});
+
+            if ($user['auth']['enabled'])
+            {
+                $token = isset($params['token']) ? $params['token'] : '';
+                $secret = $user['auth']['secret'];
+
+                if (!TFAC::verifyToken($token, $secret)['valid'])
+                {
+                    return new Response(
+                        json_encode([ 'error' => 'Invalid token.' ]),
+                        Response::HTTP_UNAUTHORIZED,
+                        ['content-type' => 'application/json']
+                    );
+                }
+            }
 
             return new Response(
                 json_encode($user),
@@ -38,19 +54,11 @@ class LoginController extends AbstractController
                 ['content-type' => 'application/json']
             );
         }
-        catch(InvalidInputException $ex)
-        {
-            return new Response(
-                json_encode(['error' => 'Invalid Email or Password.']),
-                $ex->getCode(),
-                ['content-type' => 'application/json']
-            );
-        }
-        catch(RequestException $ex)
+        catch(InvalidInputException | RequestException $ex)
         {
             $errorContent = [
                 'error' => $ex->getMessage(),
-                'details' => $ex->getMessage()
+                'details' => $ex->getDetails()
             ];
 
             return new Response(
