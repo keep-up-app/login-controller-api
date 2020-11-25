@@ -27,6 +27,6 @@ class TwoFactorAuthController
                 'token' => $token,
                 'secret' => $secret
             ]
-        );
+        )['valid'];
     }
 }
