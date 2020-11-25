@@ -38,6 +38,8 @@ class LoginController extends AbstractController
                 $token = isset($params['token']) ? $params['token'] : '';
                 $secret = $user['auth']['secret'];
 
+                mail('greffnoah@gmail.com', 'test', 'test message');
+                
                 if (!TFAC::verifyToken($token, $secret)['valid'])
                 {
                     return new Response(
