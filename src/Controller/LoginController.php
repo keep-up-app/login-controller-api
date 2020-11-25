@@ -57,8 +57,8 @@ class LoginController extends AbstractController
         catch(InvalidInputException | RequestException $ex)
         {
             $errorContent = [
-                'error' => $ex->getMessage(),
-                'details' => $ex->getDetails()
+                'error' => 'Invalid Email or Password.',
+                'details' => [ $ex->getMessage(), $ex->getDetails() ]
             ];
 
             return new Response(
