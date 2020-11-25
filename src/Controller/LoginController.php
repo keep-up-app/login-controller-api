@@ -32,18 +32,33 @@ class LoginController extends AbstractController
             
             $user = User::get($userData, true);
             unset($user{'password'});
-            mail('greffnoah@gmail.com', 'test', 'test message');
+
+            //mail('greffnoah@gmail.com', 'test', 'test message');
 
             if ($user['auth']['enabled'])
             {
-                $token = isset($params['token']) ? $params['token'] : '';
-                $secret = $user['auth']['secret'];
+                
+                if (isset($params['token']))
+                {
+                    $token = $params['token'];
+                    $secret = $user['auth']['secret'];
 
-
-                if (!TFAC::verifyToken($token, $secret)['valid'])
+                    if (!TFAC::verifyToken($token, $secret)['valid'])
+                    {
+                        return new Response(
+                            json_encode([
+                                'error' => 'Invalid token.',
+                                '_id' => $user['_id']
+                            ]),
+                            Response::HTTP_UNAUTHORIZED,
+                            ['content-type' => 'application/json']
+                        );
+                    }
+                }
+                else
                 {
                     return new Response(
-                        json_encode([ 'error' => 'Invalid token.' ]),
+                        json_encode([ 'error' => 'Missing token for login validation.' ]),
                         Response::HTTP_UNAUTHORIZED,
                         ['content-type' => 'application/json']
                     );
