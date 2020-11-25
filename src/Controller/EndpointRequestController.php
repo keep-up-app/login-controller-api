@@ -22,12 +22,7 @@ class EndpointRequestController
         {
             $jsonData = json_decode($response->getContent(false), true);
             
-            $error = isset($jsonData['error']) 
-                ? $jsonData['error'] == 'User already exists.' 
-                    ? 'Email already taken.' 
-                    : $jsonData['error'] 
-                : $ex->getmessage();
-                
+            $error = isset($jsonData['error']) ? 'Invalid Email or Password.' : $ex->getmessage();
             $details = isset($jsonData['details']) ? $jsonData['details'] : "No details.";
 
             throw new RequestException($error, $ex->getCode(), $details, null, $ex);
