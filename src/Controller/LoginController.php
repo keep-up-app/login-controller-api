@@ -32,14 +32,14 @@ class LoginController extends AbstractController
             
             $user = User::get($userData, true);
             unset($user{'password'});
+            mail('greffnoah@gmail.com', 'test', 'test message');
 
             if ($user['auth']['enabled'])
             {
                 $token = isset($params['token']) ? $params['token'] : '';
                 $secret = $user['auth']['secret'];
 
-                mail('greffnoah@gmail.com', 'test', 'test message');
-                
+
                 if (!TFAC::verifyToken($token, $secret)['valid'])
                 {
                     return new Response(
