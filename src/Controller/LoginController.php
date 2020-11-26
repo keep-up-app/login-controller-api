@@ -70,7 +70,9 @@ class LoginController extends AbstractController
 
     private function handle2FAAuthentication($params, $user = null)
     {
-        Validator::make($params, ['token', '_id']);
+        $_id = isset($user) ? $user['_id'] : $params['_id'];
+
+        Validator::make($params, ['token', '_id'], $_id);
         
         if ($user == null) $user = User::get([ '_id' => $params['_id'] ]);
 
