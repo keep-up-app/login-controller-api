@@ -32,21 +32,22 @@ class LoginController extends AbstractController
                 $user = $this->handleBasicAuthentication($params);
             }
 
+            unset($user['password']);
+            unset($user['auth']['secret']);
+
             return new Response(
-                $user,
+                json_encode($user),
                 Response::HTTP_OK,
                 ['content-type' => 'application/json']
             );
         }
         catch(InvalidInputException | RequestException $ex)
         {
-            $errorContent = [
-                'error' => $ex->getMessage(),
-                'details' => $ex->getDetails()
-            ];
-
             return new Response(
-                json_encode($errorContent),
+                json_encode([
+                    'error' => $ex->getMessage(),
+                    'details' => $ex->getDetails()
+                ]),
                 $ex->getCode(),
                 ['content-type' => 'application/json']
             );
@@ -58,14 +59,13 @@ class LoginController extends AbstractController
         Validator::make($params, ['email', 'password']);
 
         if ($user == null) $user = User::get($params);
-        unset($user{'password'});
 
         if ($user['auth']['enabled'])
         {
             return $this->handle2FAAuthentication($params, $user);
         }
 
-        return json_encode($user);
+        return $user;
     }
 
     private function handle2FAAuthentication($params, $user = null)
@@ -73,7 +73,6 @@ class LoginController extends AbstractController
         Validator::make($params, ['token', '_id']);
         
         if ($user == null) $user = User::get([ '_id' => $params['_id'] ]);
-        unset($user{'password'});
 
         if (!$user['auth']['enabled'])
         {
@@ -88,6 +87,6 @@ class LoginController extends AbstractController
             throw new InvalidInputException('Invalid Token.', 403);
         }
 
-        return json_encode($user);
+        return $user;
     }
 }
