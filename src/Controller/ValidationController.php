@@ -13,7 +13,7 @@ class ValidationController
         
         for ($i = 0; $i < count($reqs); $i++)
         {
-            if (!array_key_exists($reqs[$i], $params))
+            if (!array_key_exists($reqs[$i], $params) || !isset($params[$i]))
             {
                 throw new InvalidInputException("Missing " . ucfirst($reqs[$i]) . ".", 400); 
             }

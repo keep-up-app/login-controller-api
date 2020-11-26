@@ -22,10 +22,13 @@ class EndpointRequestController
         {
             $jsonData = json_decode($response->getContent(false), true);
             
-            $error = isset($jsonData['error']) ? $jsonData['error'] : $ex->getMessage();
-            $details = isset($jsonData['details']) ? $jsonData['details'] : null;
+            $error = isset($jsonData['error']) ? "Invalid Email or Password." : $ex->getMessage();
+            $details = isset($jsonData['details']) ? [
+                'basic' => $jsonData['error'],
+                'extensive' => $jsonData['details']
+            ] : null;
 
-            throw new RequestException($error, $response->getStatusCode(), $details, $ex);
+            throw new RequestException($error, $response->getStatusCode(), $details, null);
         }
     }
 }
