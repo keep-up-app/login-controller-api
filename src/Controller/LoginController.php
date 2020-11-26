@@ -84,7 +84,7 @@ class LoginController extends AbstractController
 
         if (!TFAC::verifyToken($token, $secret))
         {
-            throw new InvalidInputException('Invalid Token.', 403);
+            throw new InvalidInputException('Invalid Token.', 403, [ '_id' => $user['_id'] ]);
         }
 
         return $user;

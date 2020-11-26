@@ -23,9 +23,9 @@ class EndpointRequestController
             $jsonData = json_decode($response->getContent(false), true);
             
             $error = isset($jsonData['error']) ? $jsonData['error'] : $ex->getMessage();
-            $details = isset($jsonData['details']) ? $jsonData['details'] : "No details.";
+            $details = isset($jsonData['details']) ? $jsonData['details'] : null;
 
-            throw new RequestException($error, $response->getStatusCode(), $details, null, $ex);
+            throw new RequestException($error, $response->getStatusCode(), $details, $ex);
         }
     }
 }
