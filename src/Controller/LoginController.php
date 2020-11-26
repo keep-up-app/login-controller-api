@@ -72,7 +72,7 @@ class LoginController extends AbstractController
     {
         $_id = isset($user) ? $user['_id'] : $params['_id'];
 
-        Validator::make($params, ['token', '_id'], $_id);
+        Validator::make($params, ['token', '_id'], [ '_id' => $_id ]);
         
         if ($user == null) $user = User::get([ '_id' => $params['_id'] ]);
 
