@@ -11,11 +11,13 @@ use App\Controller\Exception\RequestException;
 use App\Controller\ValidationController as Validator;
 use App\Controller\TwoFactorAuthController as TFAC;
 use App\Controller\UserController as User;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\MailerInterface;
 
 class LoginController extends AbstractController
 {
     /**
-     * @Route("/", methods={"POST"})
+     * @Route("/login/basic", methods={"POST"})
      */
     public function index(Request $request) : Response
     {
@@ -23,14 +25,7 @@ class LoginController extends AbstractController
 
         try
         {
-            if (isset($params['token']))
-            {
-                $user = $this->handle2FAAuthentication($params);
-            }
-            else
-            {
-                $user = $this->handleBasicAuthentication($params);
-            }
+            $user = $this->handleBasicAuthentication($params);
 
             unset($user['password']);
             unset($user['auth']['secret']);
@@ -53,6 +48,51 @@ class LoginController extends AbstractController
             );
         }
     }
+
+
+    /**
+     * @Route("/login/2fa", methods={"POST"})
+     */
+    public function LoaginTwoFactorAuth(MailerInterface $mailer, Request $request) : Response
+    {
+        $params = json_decode($request->getContent(), true);
+
+        try
+        {
+            $user = $this->handle2FAAuthentication($params);
+            
+            /*
+            $email = (new Email())
+                ->from('greffnoah@gmail.com')
+                ->to('steam.games2441@gmail.com')
+                ->subject('Welcome to KeepUp')
+                ->text("Token:");
+
+            $mailer->send($email);
+            */
+
+            unset($user['password']);
+            unset($user['auth']['secret']);
+
+            return new Response(
+                json_encode($user),
+                Response::HTTP_OK,
+                ['content-type' => 'application/json']
+            );
+        }
+        catch(InvalidInputException | RequestException $ex)
+        {
+            return new Response(
+                json_encode([
+                    'error' => $ex->getMessage(),
+                    'details' => $ex->getDetails()
+                ]),
+                $ex->getCode(),
+                ['content-type' => 'application/json']
+            );
+        }
+    }
+
 
     private function handleBasicAuthentication($params, $user = null)
     {
