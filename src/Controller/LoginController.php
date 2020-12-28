@@ -19,13 +19,25 @@ class LoginController extends AbstractController
     /**
      * @Route("/login/basic", methods={"POST"})
      */
-    public function loginBasic(Request $request) : Response
+    public function loginBasicAuth(Request $request) : Response
     {
         try
         {
             $params = json_decode($request->getContent(), true);
-            $user = $this->handleBasicAuthentication($params);
 
+            Validator::make($params, ['email', 'password']);
+
+            $user = User::get($params);
+
+            if ($user['auth']['enabled'])
+            {
+                return new Response(
+                    [ '_id' => $user['_id'] ],
+                    Response::HTTP_TEMPORARY_REDIRECT,
+                    ['content-type' => 'application/json']
+                );                
+            }
+            
             unset($user['password']);
             unset($user['auth']['secret']);
 
@@ -114,15 +126,6 @@ class LoginController extends AbstractController
 
         if (!TFAC::verifyToken($token, $secret))
         {
-            $token = TFAC::
-            $email = (new Email())
-                ->from('greffnoah@gmail.com')
-                ->to('steam.games2441@gmail.com')
-                ->subject('Welcome to KeepUp')
-                ->text("Token: ");
-
-            $mailer->send($email);
-
             throw new InvalidInputException('Invalid Token.', 403, [ '_id' => $user['_id'] ]);
         }
 
