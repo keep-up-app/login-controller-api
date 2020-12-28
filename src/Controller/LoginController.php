@@ -43,7 +43,7 @@ class LoginController extends AbstractController
 
                 return new Response(
                     json_encode([ '_id' => $user['_id'] ]),
-                    Response::HTTP_TEMPORARY_REDIRECT,
+                    Response::HTTP_I_AM_A_TEAPOT,
                     ['content-type' => 'application/json']
                 );
             }
