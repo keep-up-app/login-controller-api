@@ -37,6 +37,6 @@ class TwoFactorAuthController
             Endpoint::AUTH,
             '/auth/generate/token/base32',
             [ 'secret' => $secret ]
-        )['token'];
+        );
     }
 }

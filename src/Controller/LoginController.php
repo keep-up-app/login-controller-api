@@ -31,13 +31,13 @@ class LoginController extends AbstractController
             if ($user['auth']['enabled'])
             {
                 $secret = $user['auth']['secret'];
-                $token = TFAC::getTokenFromSecret($secret);
+                $tokenData = TFAC::getTokenFromSecret($secret);
 
                 $email = (new Email())
                     ->from('greffnoah@gmail.com')
                     ->to($user['email'])
-                    ->subject("Here is your login token: {$token}")
-                    ->text("Token: {$token}");
+                    ->subject("Here is your login token")
+                    ->html("<h1>Token: {$tokenData['token']}</h1><p>This token will expire in {$tokenData['remaining']}s</p>");
 
                 $mailer->send($email);
 
@@ -79,6 +79,8 @@ class LoginController extends AbstractController
         {
             $params = json_decode($request->getContent(), true);
             Validator::make($params, ['token', '_id']);
+
+            $user = User::get([ '_id' => $params['_id'] ]);
 
             $token = $params['token'];
             $secret = $user['auth']['secret'];
