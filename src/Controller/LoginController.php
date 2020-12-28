@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Controller\Exception\InvalidInputException;
@@ -14,10 +13,14 @@ use App\Controller\UserController as User;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\MailerInterface;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 class LoginController extends AbstractController
 {
     /**
-     * @Route("/login/basic", methods={"POST"})
+     * @Route("/login/basic")
+     * @Method("POST")
      */
     public function index(Request $request) : Response
     {
@@ -51,7 +54,8 @@ class LoginController extends AbstractController
 
 
     /**
-     * @Route("/login/2fa", methods={"POST"})
+     * @Route("/login/2fa")
+     * @Method("POST")
      */
     public function LoaginTwoFactorAuth(MailerInterface $mailer, Request $request) : Response
     {
