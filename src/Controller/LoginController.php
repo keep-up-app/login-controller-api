@@ -19,12 +19,11 @@ class LoginController extends AbstractController
     /**
      * @Route("/login/basic", methods={"POST"})
      */
-    public function index(Request $request) : Response
+    public function loginBasic(Request $request) : Response
     {
-        $params = json_decode($request->getContent(), true);
-
         try
         {
+            $params = json_decode($request->getContent(), true);
             $user = $this->handleBasicAuthentication($params);
 
             unset($user['password']);
@@ -53,12 +52,11 @@ class LoginController extends AbstractController
     /**
      * @Route("/login/2fa", methods={"POST"})
      */
-    public function LoaginTwoFactorAuth(MailerInterface $mailer, Request $request) : Response
+    public function loaginTwoFactorAuth(MailerInterface $mailer, Request $request) : Response
     {
-        $params = json_decode($request->getContent(), true);
-
         try
         {
+            $params = json_decode($request->getContent(), true);
             $user = $this->handle2FAAuthentication($params);
 
             unset($user['password']);
