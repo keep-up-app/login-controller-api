@@ -6,7 +6,7 @@ use App\Controller\Exception\InvalidInputException;
 
 class ValidationController
 {
-    public static function make($params = [], $reqs = [], $_id = null)
+    public static function make($params = [], $reqs = [])
     {
         $params = self::flatten($params);
         $reqs = self::flatten($reqs);
@@ -15,7 +15,7 @@ class ValidationController
         {
             if (!array_key_exists($reqs[$i], $params))
             {
-                throw new InvalidInputException("Missing " . ucfirst($reqs[$i]) . ".", 400, $_id); 
+                throw new InvalidInputException("Missing " . ucfirst($reqs[$i]) . ".", 400); 
             }
         }
     }

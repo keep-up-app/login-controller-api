@@ -19,23 +19,33 @@ class LoginController extends AbstractController
     /**
      * @Route("/login/basic", methods={"POST"})
      */
-    public function loginBasicAuth(Request $request) : Response
+    public function loginBasicAuth(MailerInterface $mailer, Request $request) : Response
     {
         try
         {
             $params = json_decode($request->getContent(), true);
-
             Validator::make($params, ['email', 'password']);
 
             $user = User::get($params);
 
             if ($user['auth']['enabled'])
             {
+                $secret = $user['auth']['secret'];
+                $token = TFAC::getTokenFromSecret($secret);
+
+                $email = (new Email())
+                    ->from('greffnoah@gmail.com')
+                    ->to($user['email'])
+                    ->subject("Here is your login token: {$token}")
+                    ->text("Token: {$token}");
+
+                $mailer->send($email);
+
                 return new Response(
-                    [ '_id' => $user['_id'] ],
+                    json_encode([ '_id' => $user['_id'] ]),
                     Response::HTTP_TEMPORARY_REDIRECT,
                     ['content-type' => 'application/json']
-                );                
+                );
             }
             
             unset($user['password']);
@@ -60,16 +70,23 @@ class LoginController extends AbstractController
         }
     }
 
-
     /**
      * @Route("/login/2fa", methods={"POST"})
      */
-    public function loaginTwoFactorAuth(MailerInterface $mailer, Request $request) : Response
+    public function loaginTwoFactorAuth(Request $request) : Response
     {
         try
         {
             $params = json_decode($request->getContent(), true);
-            $user = $this->handle2FAAuthentication($params);
+            Validator::make($params, ['token', '_id']);
+
+            $token = $params['token'];
+            $secret = $user['auth']['secret'];
+    
+            if (!TFAC::verifyToken($token, $secret))
+            {
+                throw new InvalidInputException('Invalid Token.', 403);
+            }
 
             unset($user['password']);
             unset($user['auth']['secret']);
@@ -91,44 +108,5 @@ class LoginController extends AbstractController
                 ['content-type' => 'application/json']
             );
         }
-    }
-
-
-    private function handleBasicAuthentication($params, $user = null)
-    {
-        Validator::make($params, ['email', 'password']);
-
-        if ($user == null) $user = User::get($params);
-
-        if ($user['auth']['enabled'])
-        {
-            return $this->handle2FAAuthentication($params, $user);
-        }
-
-        return $user;
-    }
-
-    private function handle2FAAuthentication($params, $user = null)
-    {
-        $_id = isset($user) ? $user['_id'] : $params['_id'];
-
-        Validator::make($params, ['token', '_id'], [ '_id' => $_id ]);
-        
-        if ($user == null) $user = User::get([ '_id' => $params['_id'] ]);
-
-        if (!$user['auth']['enabled'])
-        {
-            return $this->handleBasicAuthentication($params, $user);
-        }
-        
-        $token = $params['token'];
-        $secret = $user['auth']['secret'];
-
-        if (!TFAC::verifyToken($token, $secret))
-        {
-            throw new InvalidInputException('Invalid Token.', 403, [ '_id' => $user['_id'] ]);
-        }
-
-        return $user;
     }
 }

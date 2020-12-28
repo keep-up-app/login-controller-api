@@ -35,8 +35,8 @@ class TwoFactorAuthController
         return ERC::request(
             HttpMethod::POST,
             Endpoint::AUTH,
-            'auth/generate/token/base32',
+            '/auth/generate/token/base32',
             [ 'secret' => $secret ]
-        );
+        )['token'];
     }
 }
