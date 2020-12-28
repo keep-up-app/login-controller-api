@@ -60,16 +60,6 @@ class LoginController extends AbstractController
         try
         {
             $user = $this->handle2FAAuthentication($params);
-            
-            /*
-            $email = (new Email())
-                ->from('greffnoah@gmail.com')
-                ->to('steam.games2441@gmail.com')
-                ->subject('Welcome to KeepUp')
-                ->text("Token:");
-
-            $mailer->send($email);
-            */
 
             unset($user['password']);
             unset($user['auth']['secret']);
@@ -126,6 +116,15 @@ class LoginController extends AbstractController
 
         if (!TFAC::verifyToken($token, $secret))
         {
+            $token = TFAC::
+            $email = (new Email())
+                ->from('greffnoah@gmail.com')
+                ->to('steam.games2441@gmail.com')
+                ->subject('Welcome to KeepUp')
+                ->text("Token: ");
+
+            $mailer->send($email);
+
             throw new InvalidInputException('Invalid Token.', 403, [ '_id' => $user['_id'] ]);
         }
 

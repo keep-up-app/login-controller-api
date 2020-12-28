@@ -29,4 +29,14 @@ class TwoFactorAuthController
             ]
         )['valid'];
     }
+
+    public static function getTokenFromSecret($secret)
+    {
+        return ERC::request(
+            HttpMethod::POST,
+            Endpoint::AUTH,
+            'auth/generate/token/base32',
+            [ 'secret' => $secret ]
+        );
+    }
 }
