@@ -104,8 +104,6 @@ Will yeild:
 }
 ```
 
-[login-repo]: https://github.com/noahgreff/login-controller-api/
 
 [user-repo]: https://github.com/noahgreff/user-api-endpoint/
-
 
