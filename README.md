@@ -1,6 +1,3 @@
-[![login-workflow-shield]][login-repo]
-
-
 # Login Controller Endpoint
 
 ## Overview
@@ -107,8 +104,6 @@ Will yeild:
 }
 ```
 
-
-[login-workflow-shield]: https://github.com/noahgreff/login-controller-api/workflows/Login%20Controller%20CI/badge.svg
 [login-repo]: https://github.com/noahgreff/login-controller-api/
 
 [user-repo]: https://github.com/noahgreff/user-api-endpoint/
