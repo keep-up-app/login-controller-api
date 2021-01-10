@@ -88,8 +88,8 @@ Where the `_id` field will be used on the frontend to handle the login with 2FA 
 * ##### Step 2:
 
 Sent 2fa form to login:
-* `_id`: **example@email.com**
-* `token`: **alphanumerical_1234**
+* `_id`: **759c48df-7815-41a6-a373-940470bb1b6f**
+* `token`: **480255**
 
 Will yeild:
 
